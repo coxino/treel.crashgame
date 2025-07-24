@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+
+html{
+  background: #1e1e2e;
+  font-family: Arial, sans-serif;
+}
+
+h1{
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  html{
+    padding: 0px;
+    margin: 0px;
+  }
+
+  body{
+    padding: 0px;
+    margin: 0px;
+  }
+}

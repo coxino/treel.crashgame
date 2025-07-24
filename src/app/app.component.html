@@ -1,0 +1,84 @@
+<div *ngIf="!placeBetModel.playerName" class="set-name">
+  <div class="input-container noborder">
+    <input type="text" [(ngModel)]="playerNameAux" id="messageInput" placeholder="Alege-ti un nume.">
+    <button [disabled]="playerNameAux?.length! < 3" (click)="setPlayerName()">Send</button>
+  </div>
+</div>
+
+<div class="d-flex">
+  <div class="game-container">
+    <!-- Game History -->
+    <div class="game-history">
+      <ul>
+        <li *ngFor="let round of history" class="history-item" [ngClass]="{'hi-bad':round<2,'hi-decent':round>=2,'hi-great':round>=10 }">{{ round.toFixed(2) }}x</li>
+      </ul>
+    </div>
+    <!-- Live Multiplier Display -->
+    <div class="multiplier-display">
+      <div class="crash-animation" [ngClass]="{'crash-active':isFlying}">
+        <div class="bg2" [ngClass]="{'crash-active':isFlying}"></div>
+        <img width="120px" [src]="isFlying ? 'assets/rocket_fly.png' : 'assets/rocket.png'" alt="Rocket"
+          class="rocket" />
+      </div>
+
+      <p class="multiplier-text" [class.crash-active]="!isFlying && multiplier > 1">Multiplier: <span>{{
+          multiplier.toFixed(2) }}x</span></p>
+      <p *ngIf="intervalCount > 2">Starting in {{intervalCount}} ,plasati pariurile.</p>
+      <p *ngIf="intervalCount > 0 && intervalCount < 3">Starting in {{intervalCount}}, nu se mai accepta pariuri.</p>
+      <p *ngIf="intervalCount == 0">Racheta a decolat.</p>
+    </div>
+
+    <!-- Betting Controls -->
+    <div class="">
+      <div class="top-betcontrol">
+        <h3>Sold : {{userBalance | currency:'':'':'0.2-2'}} Cox</h3>
+      </div>
+      <div class="bet-controls">
+        <input *ngIf="!isBetPlaced && !isFlying" type="number" [(ngModel)]="placeBetModel.amount"
+          placeholder="Enter bet amount" class="bet-input" />
+        <button [disabled]="placeBetModel.amount < 1 || placeBetModel.amount > 10000" (click)="placeBet()" *ngIf="!isBetPlaced && !isFlying" class="bet-button">Place Bet</button>
+        <button [disabled]="!isBetPlaced" *ngIf="isFlying || isBetPlaced" (click)="cashout()" class="cashout-button">Cashout ({{(isFlying?(multiplier *
+          placeBetModel.amount):placeBetModel.amount) | currency:'':'':'0.2-2'}})</button>
+      </div>
+
+
+      <label for="bet-button">Min Bet 1.00 / Max Bet 10,000.00</label>
+    </div>
+
+    <!-- Players List -->
+    <!-- <div class="players-list">
+      <h3>Active Players</h3>
+      <ul>
+        <span *ngFor="let player of players" class="player-item">{{ player.userName }},</span>
+      </ul>
+    </div> -->
+    <div class="active-bets">
+      <h3>
+        Partiuri Active</h3>
+      <ul>
+        <li *ngFor="let player of activeBets" class="player-item">
+          <strong>{{ player.userName }}: </strong>
+          {{player.amount | currency:'':'':'0.2-2'}} COX - {{getCashout(player.userName) |
+          currency:'cox':'cox':'0.2-2'}}</li>
+      </ul>
+    </div>
+
+  </div>
+  <!-- crash-game.component.html -->
+  <div class="chat-and-bets">
+    <div class="chat-container">
+      <div *ngIf="placeBetModel.playerName" class="chat-box" id="chatBox">
+        <div *ngFor="let item of messages" class="message bot"
+          [ngClass]="{'mymsg': item.playerName == placeBetModel.playerName, 'error':item.type=='error'}">
+          <strong>{{item.playerName}}</strong>:
+          {{item.message}}
+        </div>
+      </div>
+      <div *ngIf="placeBetModel.playerName" class="input-container">
+        <input (keydown.enter)="sendMessage(message);" type="text" [(ngModel)]="message" id="messageInput"
+          placeholder="Type a message...">
+        <button (click)="sendMessage(message)">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
